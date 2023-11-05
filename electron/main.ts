@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, Menu } from 'electron'
 import path from 'node:path'
 
 // The built directory structure
@@ -23,9 +23,10 @@ function createWindow() {
     icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: true, contextIsolation: false
     },
   })
-
+  win.webContents.openDevTools()
   // Test active push message to Renderer-process.
   win.webContents.on('did-finish-load', () => {
     win?.webContents.send('main-process-message', (new Date).toLocaleString())
@@ -58,3 +59,35 @@ app.on('activate', () => {
 })
 
 app.whenReady().then(createWindow)
+
+let template = [{
+  label: 'Test',
+  submenu: [
+      {
+          label: '问题反馈',
+          click: () => {
+              console.log("test");
+          },
+      },
+  ]
+}];
+
+if (process.platform === 'darwin') {
+  template.unshift({
+      label: app.getName(),
+      submenu: [
+          {
+              label: 'Quit',
+              click() {
+                  app.quit();
+              }
+          }
+      ]
+  });
+}
+console.log(Menu.getApplicationMenu())
+let menu = Menu.buildFromTemplate(template)
+// console.log(menu)
+Menu.setApplicationMenu(menu);
+
+// const win1 = new BrowserWindow()

@@ -105,13 +105,24 @@ function useLoading() {
   }
 }
 
+function addAction(){
+  return {
+    openWeb(){
+      console.log('ttt')
+      alert("open")
+    }
+}
+}
 // ----------------------------------------------------------------------
 
 const { appendLoading, removeLoading } = useLoading()
+const {openWeb} = addAction()
 domReady().then(appendLoading)
 
 window.onmessage = ev => {
+  console.log(ev)
   ev.data.payload === 'removeLoading' && removeLoading()
+  ev.data.payload === 'openWeb' && openWeb()
 }
 
 setTimeout(removeLoading, 4999)
